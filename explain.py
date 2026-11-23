@@ -29,7 +29,8 @@ def lime_local(model, X_train, X, seed=0, num_samples=2000) -> np.ndarray:
     out = np.zeros(X.shape)
     for i, row in enumerate(X.to_numpy()):
         exp = ex.explain_instance(row, model.predict, num_features=X.shape[1], num_samples=num_samples)
-        for j, w in exp.as_map()[0]:
+        # regression explanations live under label 1; label 0 is a placeholder LIME also fills in
+        for j, w in exp.as_map()[1]:
             # LIME weights are slopes on standardized features; turn them into contributions
             out[i, j] = w * (row[j] - ex.scaler.mean_[j]) / ex.scaler.scale_[j]
     return out
